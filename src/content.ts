@@ -4,6 +4,6 @@ const root = document.createElement("div")
 
 root.id = "root"
 
-root.innerHTML = "<span>I'm here!</span>"
+root.innerHTML = "<span>🍆</span>"
 
 document.body.appendChild(root)
