@@ -2,8 +2,10 @@
   "name": "share-session",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {},
+  "main": "dist/content.js",
+  "scripts": {
+    "build": "npx webpack"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
