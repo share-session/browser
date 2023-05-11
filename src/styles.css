@@ -3,5 +3,4 @@
 @tailwind utilities;
 
 #share-session-root {
-  @apply bg-red-500;
 }
