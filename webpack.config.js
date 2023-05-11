@@ -5,7 +5,7 @@ module.exports = {
     mode: "development",
     devtool: "inline-source-map",
     entry: {
-        main: "./src/content.ts",
+        main: "./src/content.tsx",
     },
     output: {
         path: path.resolve(__dirname, './dist'),
