@@ -8,7 +8,7 @@ root.id = "share-session-root";
 document.body.appendChild(root);
 
 function Root() {
-  return <div className="gbg-red-500">🍆</div>;
+  return <div className="bg-red-500">🍆</div>;
 }
 
 createRoot(root).render(<Root />);
