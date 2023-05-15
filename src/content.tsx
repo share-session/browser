@@ -3,9 +3,6 @@ import { createRoot } from "react-dom/client";
 
 import "./styles.css";
 
-const root = document.createElement("share-session");
-document.body.appendChild(root);
-
 function Root() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("__share");
@@ -26,12 +23,18 @@ function Root() {
     return null;
   }
 
+  function onIgnore() {
+    setIgnored(true);
+  }
+
   async function onUse() {
-    const response = await fetch("https://api.share-session.com/s/" + id);
+    const response = await fetch(
+      "https://functions-share-session.vercel.app/api/s/" + id
+    );
     const {
       cookies = [],
       localStorage = [],
-      sessionStorage,
+      sessionStorage = [],
     } = await response.json();
 
     for (const cookie of cookies) {
@@ -48,34 +51,27 @@ function Root() {
   }
 
   return (
-    <div className="bg-white fixed bottom-5 right-5 text-black px-3 py-3 shadow-md">
-      <div className="mb-2 text-sm text-center font-medium">
-        Detected session
-      </div>
-
-      <div className="grid grid-cols-2 h-10 w-44 gap-2">
+    <div className="share-session-content">
+      <div className="flex gap-4 p-4">
         <button
-          className="text-sm bg-gray-200 text-black/90 border border-black/20"
-          onClick={() => setIgnored(true)}
+          className="share-session-button share-session-button-secondary min-w-32"
+          onClick={onIgnore}
         >
           Ignore
         </button>
         <button
-          className="text-sm bg-gradient-to-br from-pink-500 to-red-400 text-black/90 order border-black/20"
+          className="share-session-button share-session-button-primary min-w-32"
           onClick={onUse}
         >
-          Use
+          Use session
         </button>
       </div>
     </div>
   );
 }
 
-export function setCookie(name: string, val: string) {
-  console.log("setting cookie", name, val);
-
+export function setCookie(name: string, value: string) {
   const date = new Date();
-  const value = val;
 
   // Set it to expire in 7 days
   date.setTime(date.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -85,4 +81,17 @@ export function setCookie(name: string, val: string) {
     name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
 }
 
-createRoot(root).render(<Root />);
+function render() {
+  if (!document.body) {
+    setTimeout(render, 250);
+    return;
+  }
+
+  const root = document.createElement("share-session");
+
+  document.body.appendChild(root);
+
+  createRoot(root).render(<Root />);
+}
+
+render();
