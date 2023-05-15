@@ -4,7 +4,8 @@
   "description": "",
   "main": "dist/content.js",
   "scripts": {
-    "build": "npx webpack"
+    "build": "npx webpack",
+    "dev": "npx webpack --watch"
   },
   "keywords": [],
   "author": "",

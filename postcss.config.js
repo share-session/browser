@@ -4,6 +4,6 @@ module.exports = {
     "postcss-import": {},
     tailwindcss: {},
     autoprefixer: {},
-    "postcss-scope": "#share-session-root",
+    "postcss-scope": "share-session",
   },
 };
