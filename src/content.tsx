@@ -55,18 +55,18 @@ function Root() {
         }
       )}
     >
-      <div className="flex sm:flex-row flex-col-reverse gap-4 p-4">
+      <div className="grid grid-rows-2 sm:grid-rows-none sm:grid-cols-2 gap-4 p-4">
+        <button
+          className="share-session-button share-session-button-primary min-w-32 row-start-1 sm:col-start-2"
+          onClick={onUse}
+        >
+          Use session
+        </button>
         <button
           className="share-session-button share-session-button-secondary min-w-32"
           onClick={onIgnore}
         >
           Ignore
-        </button>
-        <button
-          className="share-session-button share-session-button-primary min-w-32"
-          onClick={onUse}
-        >
-          Use session
         </button>
       </div>
     </div>
