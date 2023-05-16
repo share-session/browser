@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 
 import "./styles.css";
@@ -7,52 +7,55 @@ function Root() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("__share");
 
-  const [ignored, setIgnored] = useState(false);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setIgnored(localStorage.getItem("__share:" + id) === "ignored");
+    const state = localStorage.getItem("__share:" + id);
+
+    const ignored = state === "ignored";
+
+    setShow(!ignored);
   }, [id]);
 
-  useEffect(() => {
-    if (ignored) {
-      localStorage.setItem("__share:" + id, "ignored");
-    }
-  }, [ignored]);
-
-  if (!id || ignored) {
+  if (!id) {
     return null;
   }
 
   function onIgnore() {
-    setIgnored(true);
+    localStorage.setItem("__share:" + id, "ignored");
+
+    setShow(false);
   }
 
   async function onUse() {
     const response = await fetch(
-      "https://functions-share-session.vercel.app/api/s/" + id
+      "https://functions.share-session.com/api/s/" + id
     );
-    const {
-      cookies = [],
-      localStorage = [],
-      sessionStorage = [],
-    } = await response.json();
 
-    for (const cookie of cookies) {
-      setCookie(cookie.name, cookie.value);
-    }
+    const { cookies, localStorage, sessionStorage } = await response.json();
 
-    for (const item of localStorage) {
-      window.localStorage.setItem(item.name, item.value);
-    }
+    process(cookies, setCookie);
+    process(localStorage, window.localStorage.setItem);
+    process(sessionStorage, window.sessionStorage.setItem);
 
-    for (const item of sessionStorage) {
-      window.sessionStorage.setItem(item.name, item.value);
-    }
+    const params = new URLSearchParams(window.location.search);
+
+    params.delete("__share");
+
+    window.location.search = params.toString();
   }
 
   return (
-    <div className="share-session-content">
-      <div className="flex gap-4 p-4">
+    <div
+      className={classnames(
+        "bg-white fixed left-5 sm:left-auto bottom-5 right-5 text-black shadow-md rounded-xl transition",
+        {
+          "opacity-0 translate-y-[40px]": !show,
+          "opacity-100 translate-y-0": show,
+        }
+      )}
+    >
+      <div className="flex sm:flex-row flex-col-reverse gap-4 p-4">
         <button
           className="share-session-button share-session-button-secondary min-w-32"
           onClick={onIgnore}
@@ -79,6 +82,39 @@ export function setCookie(name: string, value: string) {
   // Set it
   document.cookie =
     name + "=" + value + "; expires=" + date.toUTCString() + "; path=/";
+}
+
+function process(
+  data: Record<string, any> | Array<{ name: string; value: any }>,
+  handler: (name: string, value: any) => void
+) {
+  if (!data) {
+    return;
+  }
+
+  const entries = Array.isArray(data)
+    ? data.map((item) => [item.name, item.value])
+    : Object.entries(data);
+
+  for (const [key, value] of entries) {
+    handler(key, value);
+  }
+}
+
+function classnames(...classes: Array<string | Record<string, any>>) {
+  return classes
+    .filter((s) => s)
+    .map((c) => {
+      if (typeof c === "object") {
+        const entries = Object.entries(c);
+        const filtered = entries.filter(([, value]) => value);
+        const mapped = filtered.map((value) => value[0]);
+        return mapped.join(" ");
+      }
+
+      return c;
+    })
+    .join(" ");
 }
 
 function render() {
