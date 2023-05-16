@@ -32,23 +32,28 @@ function Root() {
       "https://functions.share-session.com/api/s/" + id
     );
 
-    const { cookies, localStorage, sessionStorage } = await response.json();
+    const { cookies, localStorage, sessionStorage, html } = await response.json();
 
     process(cookies, setCookie);
     process(localStorage, window.localStorage.setItem);
     process(sessionStorage, window.sessionStorage.setItem);
 
-    const params = new URLSearchParams(window.location.search);
-
-    params.delete("__share");
-
-    window.location.search = params.toString();
+    if (html) {
+      document.open();
+      document.write(html)
+      document.close()
+    }
+    else {
+      const params = new URLSearchParams(window.location.search);
+      params.delete("__share");
+      window.location.search = params.toString();
+    }
   }
 
   return (
     <div
       className={classnames(
-        "bg-white fixed left-5 sm:left-auto bottom-5 right-5 text-black shadow-md rounded-xl transition",
+        "z-[1000] bg-white fixed left-5 sm:left-auto bottom-5 right-5 text-black shadow-md rounded-xl transition",
         {
           "opacity-0 translate-y-[40px]": !show,
           "opacity-100 translate-y-0": show,

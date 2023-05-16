@@ -4,7 +4,7 @@
 
 @layer components {
   .share-session-content {
-    @apply bg-white fixed bottom-5 right-5 text-black shadow-md rounded-xl;
+    @apply bg-white fixed bottom-5 right-5 text-black shadow-md rounded-4xl;
   }
 
   .share-session-button {
